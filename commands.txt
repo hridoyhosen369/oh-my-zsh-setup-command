@@ -1,11 +1,29 @@
-$ pkg update -y && pkg upgrade
-$ pkg install git zsh -y
-$ sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-$ git clone https://github.com/romkatv/powerlevel10k.git $ZSH_CUSTOM/themes/powerlevel10k
-$ nano .zshrc 
-[replace ZSH_theme="" with "powerlevel10k/powerlevel10k"]
-$ zsh
-$ mkdir -p ~/.plugins/zsh-autosuggestions
-$ mkdir -p ~/.plugins/zsh-syntax-highlighting
-$ git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions.git ~/.plugins/zsh-autosuggestions; echo "source ~/.plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" >> $HOME/.zshrc;
-$ git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.plugins/zsh-syntax-highlighting; echo "source ~/.plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> $HOME/.zshrc;
+# Update Ubuntu and install dependencies
+sudo apt update && sudo apt upgrade -y
+sudo apt install git zsh curl nano -y
+
+# Install Oh My Zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# Install Powerlevel10k theme
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+
+# Configure theme
+sed -i 's/^ZSH_THEME=.*/ZSH_THEME="powerlevel10k\/powerlevel10k"/' ~/.zshrc
+
+# Install Zsh Autosuggestions
+mkdir -p ~/.plugins
+git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions.git ~/.plugins/zsh-autosuggestions
+
+# Install Zsh Syntax Highlighting
+git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.plugins/zsh-syntax-highlighting
+
+# Enable plugins (avoid duplicate entries)
+grep -qxF 'source ~/.plugins/zsh-autosuggestions/zsh-autosuggestions.zsh' ~/.zshrc || echo 'source ~/.plugins/zsh-autosuggestions/zsh-autosuggestions.zsh' >> ~/.zshrc
+grep -qxF 'source ~/.plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' ~/.zshrc || echo 'source ~/.plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' >> ~/.zshrc
+
+# Set Zsh as default shell
+chsh -s "$(which zsh)"
+
+# Start Zsh
+exec zsh
